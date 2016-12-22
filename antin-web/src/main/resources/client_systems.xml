@@ -5,7 +5,7 @@
         <homeUri>/index.html</homeUri>
         <innerAddress>http://127.0.0.1</innerAddress>
     </system>
-    <system id="test2" name="test1系统">
+    <system id="test2" name="test2系统">
         <baseUrl>//www.test2.com</baseUrl>
         <homeUri>/index.html</homeUri>
         <innerAddress>http://127.0.0.1</innerAddress>
