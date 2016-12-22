@@ -17,9 +17,8 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * 登录状态验证拦截器
- * 
- * @author preach
  *
+ * @author preach
  */
 public class LoginFilter implements Filter {
 
@@ -31,15 +30,13 @@ public class LoginFilter implements Filter {
 
     private boolean notLoginOnFail; // 当授权失败时是否让浏览器跳转到服务端登录页
 
-    @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-
+        System.out.println("-------------");
     }
 
 
     /*******************************/
 
-    @Override
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException,
             ServletException {
 
@@ -58,20 +55,20 @@ public class LoginFilter implements Filter {
     // 从参数中获取服务端传来的vt后，执行一个到本链接的重定向，将vt写入cookie
     // 重定向后再发来的请求就存在有效vt参数了
     private void redirectToSelf(String vt, HttpServletRequest request, HttpServletResponse response) throws IOException {
-        final String PARANAME = "__vt_param__="; 
+        final String PARANAME = "__vt_param__=";
         // 此处拼接redirect的url，去除vt参数部分
         StringBuffer location = request.getRequestURL();
-       
+
         String qstr = request.getQueryString();
         int index = qstr.indexOf(PARANAME);
-      //http://www.sys1.com:8081/test/tt?a=2&b=xxx
+        //http://www.sys1.com:8081/test/tt?a=2&b=xxx
         if (index > 0) { // 还有其它参数，para1=param1&param2=param2&__vt_param__=xxx是最后一个参数
             qstr = "?" + qstr.substring(0, qstr.indexOf(PARANAME) - 1);
         } else { // 没有其它参数 qstr = __vt_param__=xxx
             qstr = "";
         }
-        
-        
+
+
         location.append(qstr);
 
         Cookie cookie = new Cookie("VT", vt);
@@ -84,15 +81,15 @@ public class LoginFilter implements Filter {
 
     // 从请求参数中解析vt
     private String pasreVtParam(HttpServletRequest request) {
-        
+
         final String PARANAME = "__vt_param__=";
-        
+
         String qstr = request.getQueryString();
-      // a=2&b=xxx&__vt_param__=xxxxxxx
+        // a=2&b=xxx&__vt_param__=xxxxxxx
         if (qstr == null) {
             return null;
         }
-        
+
         int index = qstr.indexOf(PARANAME);
         if (index > -1) {
             return qstr.substring(index + PARANAME.length());
@@ -119,7 +116,7 @@ public class LoginFilter implements Filter {
             // 可以在发送这类请求前任意时间点发起一次任意get类型请求，这个get请求通过loginCheck
             // 的引导从服务端获取到vt，当再发起post请求时，vt已存在并有效，就不会进入到这个过程，从而避免了问题出现
 // http://www.sys1.com:8081/test/tt?a=2&b=xxx&__vt_param__=
-          
+
             String qstr = makeQueryString(request); // 将所有请求参数重新拼接成queryString
             String backUrl = request.getRequestURL() + qstr; // 回调url
             String location = serverBaseUrl + "/login?backUrl=" + URLEncoder.encode(backUrl, "utf-8");
@@ -153,7 +150,6 @@ public class LoginFilter implements Filter {
     }
 
 
-
     // 判断请求是否不需要拦截
     private boolean requestIsExclude(ServletRequest request) {
 
@@ -177,7 +173,6 @@ public class LoginFilter implements Filter {
         return isExcluded;
     }
 
-    @Override
     public void destroy() {
         // DO nothing
     }
