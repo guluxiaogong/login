@@ -9,7 +9,7 @@
         <module>antin-login</module>
         <module>antin-web</module>
     </modules>
-    <name>login Maven Webapp</name>
+    <name>login</name>
     <url>http://maven.apache.org</url>
 
     <dependencyManagement>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context  
+    http://www.springframework.org/schema/context/spring-context.xsd ">
+
+    <!-- 使用annotation 自动注册bean, 并保证@Required、@Autowired的属性被注入 -->
+    <context:component-scan base-package="com.antin">
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+        <context:exclude-filter type="annotation"
+                                expression="org.springframework.web.bind.annotation.ControllerAdvice"/>
+    </context:component-scan>
+
+   <!-- <context:annotation-config/>-->
+
+    <bean class="com.antin.helper.Config" init-method="refreshConfig"
+          destroy-method="destroy">
+        <property name="loginViewName" value="/login/login.html"/>
+        <property name="authenticationHandler">
+            <bean class="com.antin.service.CaptchaAuthenticationHandler"/>
+        </property>
+        <property name="preLoginHandler">
+            <bean class="com.antin.service.CaptchaPreLoginHandler"/>
+        </property>
+        <!--
+        <property name="tokenTimeout" value="15" />
+        -->
+    </bean>
+</beans>

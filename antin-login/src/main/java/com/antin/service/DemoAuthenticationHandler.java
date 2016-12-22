@@ -1,10 +1,10 @@
 package com.antin.service;
 
-import java.util.Set;
+import com.antin.model.Credential;
+import com.antin.model.DemoLoginUser;
+import com.antin.model.LoginUser;
 
-import demo.sso.server.model.Credential;
-import demo.sso.server.model.DemoLoginUser;
-import demo.sso.server.model.LoginUser;
+import java.util.Set;
 
 /**
  * 示例性的鉴权处理器，当用户名和密码都为admin时授权通过，返回的也是一个示例性Credential实例
