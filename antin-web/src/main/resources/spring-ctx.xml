@@ -6,18 +6,18 @@
     http://www.springframework.org/schema/context  
     http://www.springframework.org/schema/context/spring-context.xsd ">
 
-	<context:component-scan base-package="demo.sso.server" />
+	<context:component-scan base-package="com.antin" />
 
 	<context:annotation-config />
 
-	<bean class="demo.sso.server.Config" init-method="refreshConfig"
+	<bean class="com.antin.helper.Config" init-method="refreshConfig"
 		destroy-method="destroy">
 		<property name="loginViewName" value="/login2" />
 		<property name="authenticationHandler">
-			<bean class="demo.sso.server.service.CaptchaAuthenticationHandler" />
+			<bean class="com.antin.service.CaptchaAuthenticationHandler" />
 		</property>
 		<property name="preLoginHandler">
-			<bean class="demo.sso.server.service.CaptchaPreLoginHandler"/>
+			<bean class="com.antin.service.CaptchaPreLoginHandler"/>
 		</property>
 		<!-- 
 		<property name="tokenTimeout" value="15" />
