@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <meta name='description' content=''>
+    <meta name='author' content=''>
+    <link rel='icon' href='script/bootStrap/images/favicon.ico'>
+
+    <title>系统登录页面</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href='script/bootStrap/css/bootstrap.min.css' rel='stylesheet'>
+
+    <!-- Custom styles for this template -->
+    <link href='css/login.css' rel='stylesheet'>
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]>
+    <script src='script/bootStrap/assets/js/ie8-responsive-file-warning.js'></script><![endif]-->
+    <script src='script/bootStrap/assets/js/ie-emulation-modes-warning.js'></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src='https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js'></script>
+    <script src='https://oss.maxcdn.com/respond/1.4.2/respond.min.js'></script>
+    <![endif]-->
+    <script src='script/jquery-1.11.1.js'></script>
+    <script src='script/cookieUtil.js'></script>
+    <script src='script/md5.js'></script>
+    <script src='js/login.js'></script>
+</head>
+<style type='text/css'>
+    body {
+        padding-top: 12%;
+    }
+
+    .form-signin input[type='password'] {
+        margin-bottom: 0;
+    }
+
+    .captcha {
+        height: 44px;
+    }
+
+    .captcha .input-div {
+        float: left;
+        width:57%;
+    }
+
+    .captcha .img-div {
+        float: right;
+    }
+
+    .captcha div img {
+        width: auto;
+        height: 44px;
+        cursor: pointer;
+    }
+</style>
+
+<body>
+<div class='container'>
+    <form class='form-signin' role='form'>
+        <input type='text' class='form-control' name='loginName' placeholder='请输入帐号' required autofocus><br/>
+        <input type='password' class='form-control' placeholder='请输入密码' required><br/>
+        <div class='captcha'>
+            <div class="input-div">
+                <input type='text' class='form-control' name='captcha' placeholder='验证码'>
+            </div>
+            <div class="img-div">
+                <img src='' id='captchaImg' alt='验证码'/>
+            </div>
+        </div>
+        <div class='checkbox'>
+            <label>
+                <input type='checkbox' value='rememberMe'> 五天内自动登录
+            </label>
+        </div>
+        <button class='btn btn-lg btn-primary btn-block' type='submit'>登录</button>
+    </form>
+
+</div> <!-- /container -->
+
+
+<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+<script src='script/bootStrap/assets/js/ie10-viewport-bug-workaround.js'></script>
+</body>
+</html>

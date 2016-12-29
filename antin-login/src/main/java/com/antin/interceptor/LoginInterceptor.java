@@ -32,6 +32,7 @@ public class LoginInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object o) throws Exception {
+       System.out.println("-------preHandle----"+request.getRequestURI());
         // 如果是不需要拦截的请求，直接通过
         if (requestIsExclude(request))
             return true;

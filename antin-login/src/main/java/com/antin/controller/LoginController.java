@@ -39,7 +39,7 @@ public class LoginController {
      */
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String login(HttpServletRequest request, String backUrl, HttpServletResponse response) throws Exception {
-
+        System.out.println(request.getHeader("Referer") + "-------GET----" + request.getRequestURL());
         //获取自动登录标识存在
         String auto = CookieUtil.getCookie("auto", request);
 
@@ -69,7 +69,7 @@ public class LoginController {
     @RequestMapping(method = RequestMethod.POST, value = "/login")
     public Object login(String backUrl, Boolean rememberMe, HttpServletRequest request, HttpSession session,
                         HttpServletResponse response) throws Exception {
-
+        System.out.println(request.getHeader("Referer") + "-----POST------" + request.getRequestURL());
         final Map<String, String[]> params = request.getParameterMap();
 
         //验证码
@@ -137,7 +137,7 @@ public class LoginController {
     public String logout(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         String token = CookieUtil.getCookie("token", request);
-       // String auto = CookieUtil.getCookie("auto", request);
+        // String auto = CookieUtil.getCookie("auto", request);
 
         // 清除自动登录信息
         LoginUser loginUser = TokenManager.validate(token);

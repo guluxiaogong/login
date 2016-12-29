@@ -34,7 +34,7 @@
     <mvc:default-servlet-handler/>
 
     <!-- 定义无需Controller的url<->view直接映射 -->
-    <mvc:view-controller path="/" view-name="redirect:/login/"/>
+    <mvc:view-controller path="/" view-name="redirect:/login"/>
 
     <mvc:interceptors>
         <!-- secure mode拦截检验 -->
@@ -45,7 +45,9 @@
         <!--登录拦截检验-->
         <mvc:interceptor>
             <mvc:mapping path="/*"/>
+            <mvc:exclude-mapping path="/"/>
             <mvc:exclude-mapping path="/login"/>
+            <mvc:exclude-mapping path="/preLogin"/>
             <bean class="com.antin.interceptor.LoginInterceptor"/>
         </mvc:interceptor>
     </mvc:interceptors>

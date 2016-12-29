@@ -18,8 +18,8 @@
 
     <bean class="com.antin.helper.Config" init-method="refreshConfig"
           destroy-method="destroy">
-        <property name="loginViewName" value="/login/login.html"/>
-        <property name="indexViewName" value="/web/main.html"/>
+        <property name="loginViewName" value="/html/login.html"/>
+        <property name="indexViewName" value="/html/index.html"/>
         <property name="authenticationHandler">
             <bean class="com.antin.service.CaptchaAuthenticationHandler"/>
         </property>
