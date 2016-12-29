@@ -3,22 +3,28 @@ package com.antin.model;
 @SuppressWarnings("serial")
 public class DemoLoginUser extends LoginUser {
 
-	private String loginName;
+    private String loginName;
 
-	public void setLoginName(String loginName) {
-		this.loginName = loginName;
-	}
+    private String password;
 
-	public String getLoginName() {
-		return loginName;
-	}
-	
-	public String getPasswd() {
-		return "admin";
-	}
+    public void setLoginName(String loginName) {
+        this.loginName = loginName;
+    }
 
-	@Override
-	public String toString() {
-		return loginName;
-	}
+    public String getLoginName() {
+        return loginName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    @Override
+    public String toString() {
+        return loginName;
+    }
 }

@@ -33,6 +33,7 @@ public class Config implements ResourceLoaderAware {
     private IAuthenticationHandler authenticationHandler; // 鉴权处理器
     private IPreLoginHandler preLoginHandler; // 登录前预处理器
     private String loginViewName = "/login.html"; // 登录页面视图名称
+    private String indexViewName = "/index.html";//首页
 
     private int tokenTimeout = 30; // 令牌有效期，单位为分钟，默认30分钟
 
@@ -176,6 +177,19 @@ public class Config implements ResourceLoaderAware {
     }
 
     /**
+     * 登录后首面
+     *
+     * @return
+     */
+    public String getIndexViewName() {
+        return indexViewName;
+    }
+
+    public void setIndexViewName(String indexViewName) {
+        this.indexViewName = indexViewName;
+    }
+
+    /**
      * 获取令牌有效期，单位为分钟
      *
      * @return
@@ -210,7 +224,7 @@ public class Config implements ResourceLoaderAware {
      */
     public List<ClientSystem> getClientSystems(LoginUser loginUser)
             throws Exception {
-        Set<String> authedSysIds = getAuthenticationHandler().authedSystemIds(loginUser);
+        Set<String> authedSysIds = getAuthenticationHandler().authedRoles(loginUser);
 
         // null表示允许全部
         if (authedSysIds == null) {

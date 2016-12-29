@@ -30,7 +30,7 @@ public abstract class Credential {
 	 * 
 	 * @return
 	 */
-	public abstract Object getSettedSessionValue();
+	public abstract Object getVerificationCode();
 
 	/**
 	 * 授权失败时，设置失败提示信息

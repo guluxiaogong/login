@@ -15,7 +15,10 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.antin.helper.CookieUtil;
 import com.antin.helper.StringUtil;
+import com.antin.helper.TokenManager;
+import com.antin.model.LoginUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,8 +54,43 @@ public class LoginFilter implements Filter {
             chain.doFilter(request, response);
             return;
         }
+        /**************************************/
+        logger.debug("进入SSOFilter,当前请求url: {}", request.getRequestURL());
 
+        // 进行登录状态验证
+        String vt = CookieUtil.getCookie("VT", request);
+        if (vt != null) {
+            LoginUser user = null;
 
+            try {
+                user = TokenManager.validate(vt);
+            } catch (Exception e) {
+                throw new ServletException(e);
+            }
+
+            if (user != null) {
+                //holdUser(user, request); // 将user存放，供业务系统使用
+                chain.doFilter(request, response); // 请求继续向下执行
+            } else {
+                // 删除无效的VT cookie
+                CookieUtil.deleteCookie("VT", response, "/");
+                // 引导浏览器重定向到服务端执行登录校验
+                loginCheck(request, response);
+            }
+        } else {
+            String vtParam = pasreVtParam(request); // 从请求中
+            if (vtParam == null) {
+                // 请求中中没有vtParam，引导浏览器重定向到服务端执行登录校验
+                loginCheck(request, response);
+            } else if (vtParam.length() == 0) {
+                // 有vtParam，但内容为空，表示到服务端loginCheck后，得到的结果是未登录
+                response.sendError(403);
+            } else {
+                // 让浏览器向本链接发起一次重定向，此过程去除vtParam，将vt写入cookie
+                redirectToSelf(vtParam, request, response);
+            }
+        }
+        /**************************************/
     }
 
     // 从参数中获取服务端传来的vt后，执行一个到本链接的重定向，将vt写入cookie
@@ -118,7 +156,7 @@ public class LoginFilter implements Filter {
             // 解决这个问题，只能是让用户系统去避免这种情况发生.
             // 可以在发送这类请求前任意时间点发起一次任意get类型请求，这个get请求通过loginCheck
             // 的引导从服务端获取到vt，当再发起post请求时，vt已存在并有效，就不会进入到这个过程，从而避免了问题出现
-// http://www.sys1.com:8081/test/tt?a=2&b=xxx&__vt_param__=
+            // http://www.sys1.com:8081/test/tt?a=2&b=xxx&__vt_param__=
 
             String qstr = makeQueryString(request); // 将所有请求参数重新拼接成queryString
             String backUrl = request.getRequestURL() + qstr; // 回调url
@@ -135,7 +173,7 @@ public class LoginFilter implements Filter {
     // 将所有请求参数重新拼接成queryString
     private String makeQueryString(HttpServletRequest request) throws UnsupportedEncodingException {
         StringBuilder builder = new StringBuilder();
-// ? a= 1&a=2&b=xx [1,2][] ?a=1&a=2&b=xxx
+        // ? a= 1&a=2&b=xx [1,2][] ?a=1&a=2&b=xxx
         Enumeration<String> paraNames = request.getParameterNames();
         while (paraNames.hasMoreElements()) {
             String paraName = paraNames.nextElement();
@@ -157,9 +195,8 @@ public class LoginFilter implements Filter {
     private boolean requestIsExclude(ServletRequest request) {
 
         // 没有设定excludes时，所以经过filter的请求都需要被处理
-        if (StringUtil.isEmpty(excludes)) {
+        if (StringUtil.isEmpty(excludes))
             return false;
-        }
 
         // 获取去除context path后的请求路径
         String contextPath = request.getServletContext().getContextPath();
@@ -169,9 +206,8 @@ public class LoginFilter implements Filter {
         // 正则模式匹配的uri被排除，不需要拦截
         boolean isExcluded = uri.matches(excludes);
 
-        if (isExcluded) {
+        if (isExcluded)
             logger.debug("request path: {} is excluded!", uri);
-        }
 
         return isExcluded;
     }

@@ -6,16 +6,17 @@ import javax.servlet.http.HttpSession;
 
 /**
  * 登录页前置处理器
- * 
- * @author Administrator
  *
+ * @author Administrator
  */
 public interface IPreLoginHandler {
+    /**
+     * 验证码
+     */
+    public static final String VERIFICATION_CODE = "verification_code";
 
-	public static final String SESSION_ATTR_NAME = "login_session_attr_name";
-
-	/**
-	 * 前置处理
-	 */
-	public abstract Map<?, ?> handle(HttpSession session) throws Exception;
+    /**
+     * 前置处理
+     */
+    public abstract Map<?, ?> handle(HttpSession session) throws Exception;
 }

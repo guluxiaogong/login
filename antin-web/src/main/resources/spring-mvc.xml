@@ -36,12 +36,18 @@
     <!-- 定义无需Controller的url<->view直接映射 -->
     <mvc:view-controller path="/" view-name="redirect:/login/"/>
 
-      <mvc:interceptors>
-          <!-- secure mode拦截检验 -->
-          <mvc:interceptor>
-              <mvc:mapping path="/*"/>
-              <bean class="com.antin.helper.SecureModeInterceptor"/>
-          </mvc:interceptor>
-      </mvc:interceptors>
+    <mvc:interceptors>
+        <!-- secure mode拦截检验 -->
+        <mvc:interceptor>
+            <mvc:mapping path="/*"/>
+            <bean class="com.antin.helper.SecureModeInterceptor"/>
+        </mvc:interceptor>
+        <!--登录拦截检验-->
+        <mvc:interceptor>
+            <mvc:mapping path="/*"/>
+            <mvc:exclude-mapping path="/login"/>
+            <bean class="com.antin.interceptor.LoginInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
 
 </beans>

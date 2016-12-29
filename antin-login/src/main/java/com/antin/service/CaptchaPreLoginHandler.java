@@ -30,9 +30,8 @@ public class CaptchaPreLoginHandler implements IPreLoginHandler {
 		Map<String, Object> ret = new HashMap<String, Object>();
 
 		String code = randomCode();
-		session.setAttribute(SESSION_ATTR_NAME, code);
-		ret.put("imgData", "data:image/png;base64,"
-				+ Base64.getEncoder().encodeToString(generateImg(code)));
+		session.setAttribute(VERIFICATION_CODE, code);
+		ret.put("imgData", "data:image/png;base64," + Base64.getEncoder().encodeToString(generateImg(code)));
 
 		return ret;
 	}

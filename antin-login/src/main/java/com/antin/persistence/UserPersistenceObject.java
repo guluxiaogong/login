@@ -38,6 +38,7 @@ public class UserPersistenceObject {
         if ("admin".equals(uname)) {
             DemoLoginUser loginUser = new DemoLoginUser();
             loginUser.setLoginName("admin");
+            loginUser.setPassword("admin");
             return loginUser;
         }
         return null;
