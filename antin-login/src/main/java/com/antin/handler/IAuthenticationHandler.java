@@ -1,4 +1,4 @@
-package com.antin.service;
+package com.antin.handler;
 
 import com.antin.model.Credential;
 import com.antin.model.LoginUser;

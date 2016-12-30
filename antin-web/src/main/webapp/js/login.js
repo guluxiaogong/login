@@ -38,13 +38,15 @@ $(function () {
                     data: {
                         loginName: $.trim(loginName.val()),
                         password: $.md5($.md5($('input[type=password]').val()) + captcha),
-                        captcha: captcha
+                        captcha: captcha,
+                        rememberMe:$('input[type=checkbox]')[0].checked
                     },
                     beforeSend: function (xhr) {
                         console.log(xhr);
                         $('.message').html("登录中...");
                     },
                     success: function (result) { //...
+
                         var content = "网络连接失败！";
                         if (result) {
                             if (result.code == 0)
@@ -58,17 +60,19 @@ $(function () {
                                 return;
                             }
                         }
+                        internal.loadCaptcha();//验证失败后刷新验证码
                         $('.message').html(content);
-                        console.log(result);
+
                     },
                     error: function (XMLHttpRequest, errorMsg, e) {
                         console.log(errorMsg);
+                        internal.loadCaptcha();//登录失败后刷新验证码
                         $('.message').html("登录失败！");
                     }
                     ,
                     complete: function (xhr, ts) {
                         console.log(xhr);
-                        internal.loadCaptcha();
+
                     }
                 });
             });

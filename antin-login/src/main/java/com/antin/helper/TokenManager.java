@@ -21,9 +21,10 @@ public class TokenManager {
     private static Logger logger = LoggerFactory.getLogger(TokenManager.class);
 
     private static final Timer timer = new Timer(true);
-    private static final Config config = SpringContextUtil.getBean(Config.class);
 
-    static {
+    private static final ConfigHelper CONFIG_HELPER = SpringContextUtil.getBean(ConfigHelper.class);
+
+    static {//定期清理过期的令牌
         timer.schedule(new TimerTask() {
 
             @Override
@@ -82,7 +83,7 @@ public class TokenManager {
         tm.loginUser = loginUser;
 
         tm.expired = new Date(new Date().getTime()
-                + config.getTokenTimeout() * 60 * 1000);
+                + CONFIG_HELPER.getTokenTimeout() * 60 * 1000);
 
         DATA_MAP.put(token, tm);
     }

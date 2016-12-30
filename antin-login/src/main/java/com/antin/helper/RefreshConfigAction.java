@@ -1,6 +1,5 @@
-package com.antin.controller;
+package com.antin.helper;
 
-import com.antin.helper.Config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,10 +11,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @author Administrator
  */
 @Controller
-public class ConfigManageController {
+public class RefreshConfigAction {
 
     @Autowired
-    private Config config;
+    private ConfigHelper configHelper;
 
     @RequestMapping("/config")
     public void configPage() {
@@ -26,7 +25,7 @@ public class ConfigManageController {
     public boolean config(String code) throws Exception {
         if ("test".equals(code)) {
 
-            config.refreshConfig();
+            configHelper.refreshConfig();
             return true;
         }
 

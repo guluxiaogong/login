@@ -1,8 +1,10 @@
-package com.antin.persistence;
+package com.antin.persist;
 
 import java.io.FileOutputStream;
 
+import com.antin.helper.MD5;
 import com.antin.model.DemoLoginUser;
+import jdk.nashorn.internal.runtime.Context;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -14,17 +16,17 @@ import org.springframework.stereotype.Repository;
 public class UserPersistenceObject {
 
     /**
-     * 更新当前登录用户的lt标识
+     * 更新当前登录用户的auto标识
      *
      * @param loginName
-     * @param lt
+     * @param auto
      * @throws Exception
      */
-    public void updateLoginToken(String loginName, String lt) throws Exception {
+    public void updateLoginToken(String loginName, String auto) throws Exception {
 
-        //将信息写入存储文件test，格式为lt=loginName，如：02564fc6a02a35c689cbdf898458d2da=admin
-        FileOutputStream fos = new FileOutputStream("d:/test");
-        fos.write((lt + "=" + loginName).getBytes());
+        //将信息写入存储文件test，格式为auto=loginName，如：02564fc6a02a35c689cbdf898458d2da=admin
+        FileOutputStream fos = new FileOutputStream("/testssss");
+        fos.write((auto + "=" + loginName).getBytes());
         fos.close();
     }
 
@@ -38,7 +40,7 @@ public class UserPersistenceObject {
         if ("admin".equals(uname)) {
             DemoLoginUser loginUser = new DemoLoginUser();
             loginUser.setLoginName("admin");
-            loginUser.setPassword("admin");
+            loginUser.setPassword(MD5.encode("admin"));
             return loginUser;
         }
         return null;

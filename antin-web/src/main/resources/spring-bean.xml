@@ -14,20 +14,15 @@
                                 expression="org.springframework.web.bind.annotation.ControllerAdvice"/>
     </context:component-scan>
 
-   <!-- <context:annotation-config/>-->
-
-    <bean class="com.antin.helper.Config" init-method="refreshConfig"
+    <bean class="com.antin.helper.ConfigHelper" init-method="refreshConfig"
           destroy-method="destroy">
         <property name="loginViewName" value="/html/login.html"/>
         <property name="indexViewName" value="/html/index.html"/>
         <property name="authenticationHandler">
-            <bean class="com.antin.service.CaptchaAuthenticationHandler"/>
+            <bean class="com.antin.handler.impl.CaptchaAuthenticationHandler"/>
         </property>
         <property name="preLoginHandler">
-            <bean class="com.antin.service.CaptchaPreLoginHandler"/>
+            <bean class="com.antin.handler.impl.CaptchaPreLoginHandler"/>
         </property>
-        <!--
-        <property name="tokenTimeout" value="15" />
-        -->
     </bean>
 </beans>

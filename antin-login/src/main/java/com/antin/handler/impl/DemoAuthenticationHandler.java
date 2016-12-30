@@ -1,5 +1,6 @@
-package com.antin.service;
+package com.antin.handler.impl;
 
+import com.antin.handler.IAuthenticationHandler;
 import com.antin.model.Credential;
 import com.antin.model.DemoLoginUser;
 import com.antin.model.LoginUser;
@@ -12,7 +13,13 @@ import java.util.Set;
  * @author Administrator
  */
 public class DemoAuthenticationHandler implements IAuthenticationHandler {
-
+    /**
+     * 验证用户名和密码
+     *
+     * @param credential
+     * @return
+     * @throws Exception
+     */
     @Override
     public LoginUser authenticate(Credential credential) throws Exception {
         if ("admin".equals(credential.getParameter("name"))
@@ -38,15 +45,35 @@ public class DemoAuthenticationHandler implements IAuthenticationHandler {
         return null;
     }
 
+    /**
+     * 生成自动登录标识
+     *
+     * @param loginUser
+     * @return
+     * @throws Exception
+     */
     @Override
     public String createAutoToken(LoginUser loginUser) throws Exception {
         return null;
     }
 
+    /**
+     * 更新持久化的用户
+     *
+     * @param loginUser
+     * @throws Exception
+     */
     @Override
     public void clearAutoToken(LoginUser loginUser) throws Exception {
     }
 
+    /**
+     * 用户权限
+     *
+     * @param loginUser//TODO
+     * @return
+     * @throws Exception
+     */
     @Override
     public Set<String> authedRoles(LoginUser loginUser) throws Exception {
         return null;

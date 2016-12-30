@@ -11,7 +11,7 @@
 								http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
     <!-- 自动扫描且只扫描@Controller -->
-    <context:component-scan base-package="com.antin.controller" use-default-filters="false">
+    <context:component-scan base-package="com.antin.action" use-default-filters="false">
         <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
         <context:include-filter type="annotation"
                                 expression="org.springframework.web.bind.annotation.ControllerAdvice"/>
@@ -34,14 +34,13 @@
     <mvc:default-servlet-handler/>
 
     <!-- 定义无需Controller的url<->view直接映射 -->
-     <mvc:view-controller path="/" view-name="redirect:/login"/>
+    <mvc:view-controller path="/" view-name="redirect:/login"/>
 
     <mvc:interceptors>
-        <!-- secure mode拦截检验 -->
+        <!-- secure mode拦截检验是否安全模式 -->
         <!--<mvc:interceptor>
             <mvc:mapping path="/*"/>
-            <bean class="com.antin.interceptor.SecureModeInterceptor"/>
-        </mvc:interceptor>-->
+            <bean class="com.antin.interceptor.SecureInterceptor</mvc:interceptor>-->
         <!--登录拦截检验-->
         <mvc:interceptor>
             <mvc:mapping path="/*"/>

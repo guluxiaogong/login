@@ -1,12 +1,16 @@
 package com.antin.helper;
 
+import com.antin.model.Credential;
 import com.antin.model.LoginUser;
+import com.antin.handler.IPreLoginHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.util.Map;
 
 /**
  * Created by Administrator on 2016/12/30.
@@ -14,10 +18,10 @@ import javax.servlet.http.HttpServletResponse;
 @Component
 public class LoginHelper {
     @Autowired
-    private Config config;
+    private ConfigHelper configHelper;
 
     /**
-     * 验证令牌和自动登录识
+     * 验证令牌和自动登录标识
      *
      * @param request
      * @param response
@@ -69,7 +73,7 @@ public class LoginHelper {
         String auto = CookieUtil.getCookie("auto", request);
         if (auto != null) {
             //验证自动标识是否有效
-            LoginUser loginUser = config.getAuthenticationHandler().validateAutoToken(auto);
+            LoginUser loginUser = configHelper.getAuthenticationHandler().validateAutoToken(auto);
             if (loginUser != null) {
                 authSuccess(response, loginUser, true);//自动登录标识有效，生成令牌
                 return true;
@@ -78,14 +82,56 @@ public class LoginHelper {
         return false;
     }
 
-    // 授权成功后的操作
-    private String authSuccess(HttpServletResponse response, LoginUser loginUser, Boolean rememberMe) throws Exception {
+    /**
+     * 获取鉴权对象
+     *
+     * @param request
+     * @param session
+     * @return
+     */
+    public Credential getCredential(HttpServletRequest request, HttpSession session) {
+        final Map<String, String[]> params = request.getParameterMap();
+
+        //验证码
+        final Object verificationCode = session.getAttribute(IPreLoginHandler.VERIFICATION_CODE);
+
+        //鉴权对象
+        Credential credential = new Credential() {
+            @Override
+            public String getParameter(String name) {
+                String[] tmp = params.get(name);
+                return tmp != null && tmp.length > 0 ? tmp[0] : null;
+            }
+
+            @Override
+            public String[] getParameterValue(String name) {
+                return params.get(name);
+            }
+
+            @Override
+            public Object getVerificationCode() {
+                return verificationCode;
+            }
+        };
+        return credential;
+    }
+
+    /**
+     * 授权成功后的操作
+     * (向cookie中写入令牌、自动登录标识、用户名)
+     *
+     * @param response
+     * @param loginUser
+     * @param rememberMe
+     * @throws Exception
+     */
+    public void authSuccess(HttpServletResponse response, LoginUser loginUser, Boolean rememberMe) throws Exception {
         // 生成令牌
         String token = StringUtil.uniqueKey();
         // 生成自动登录标识
         if (rememberMe != null && rememberMe) {
-            String auto = config.getAuthenticationHandler().createAutoToken(loginUser);
-            CookieUtil.setCookie("auto", auto, config.getAutoLoginExpDays() * 24 * 60 * 60, config.isSecureMode(), response, null);
+            String auto = configHelper.getAuthenticationHandler().createAutoToken(loginUser);
+            CookieUtil.setCookie("auto", auto, configHelper.getAutoLoginExpDays() * 24 * 60 * 60, configHelper.isSecureMode(), response, null);
         }
         // 存入Map
         TokenManager.addToken(token, loginUser);
@@ -93,10 +139,13 @@ public class LoginHelper {
         Cookie cookie = new Cookie("token", token);
 
         // 是否仅https模式，如果是，设置cookie secure为true
-        if (config.isSecureMode()) {
+        if (configHelper.isSecureMode()) {
             cookie.setSecure(true);
         }
         response.addCookie(cookie);
-        return token;
+
+        Cookie loginUserCookie = new Cookie("loginName", loginUser.toString());
+        response.addCookie(loginUserCookie);
+
     }
 }

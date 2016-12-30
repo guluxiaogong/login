@@ -1,12 +1,10 @@
 package com.antin.helper;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 
-import com.antin.service.IAuthenticationHandler;
-import com.antin.service.IPreLoginHandler;
+import com.antin.handler.IAuthenticationHandler;
+import com.antin.handler.IPreLoginHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ResourceLoaderAware;
@@ -18,9 +16,9 @@ import org.springframework.core.io.ResourceLoader;
  *
  * @author Administrator
  */
-public class Config implements ResourceLoaderAware {
+public class ConfigHelper implements ResourceLoaderAware {
 
-    private static Logger logger = LoggerFactory.getLogger(Config.class);
+    private static Logger logger = LoggerFactory.getLogger(ConfigHelper.class);
 
     private ResourceLoader resourceLoader;
 
@@ -38,7 +36,6 @@ public class Config implements ResourceLoaderAware {
 
     private int autoLoginExpDays = 365; // 自动登录状态有效期限，默认一年
 
-
     /**
      * 重新加载配置，以支持热部署
      */
@@ -46,10 +43,9 @@ public class Config implements ResourceLoaderAware {
 
         // 加载config.properties
         Properties configProperties = new Properties();
-
         try {
             Resource resource = resourceLoader
-                    .getResource("classpath:config.properties");
+                    .getResource("classpath:login-config.properties");
             configProperties.load(resource.getInputStream());
         } catch (IOException e) {
             logger.warn("在classpath下未找到配置文件config.properties");

@@ -21,7 +21,7 @@ public class LoginInterceptor implements HandlerInterceptor {
     private Logger logger = LoggerFactory.getLogger(LoginInterceptor.class);
 
     @Autowired
-    private Config config;
+    private ConfigHelper configHelper;
 
     @Autowired
     private LoginHelper loginHelper;
@@ -54,7 +54,7 @@ public class LoginInterceptor implements HandlerInterceptor {
     private String getLocation(HttpServletRequest request) throws UnsupportedEncodingException {
         String qstr = makeQueryString(request); // 将所有请求参数重新拼接成queryString
         String backUrl = request.getRequestURL() + qstr; // 回调url
-        String location = request.getContextPath() + "/?backUrl=" + URLEncoder.encode(backUrl, "utf-8");
+        String location = request.getContextPath() + "/login?backUrl=" + URLEncoder.encode(backUrl, "utf-8");
         return location;
     }
 

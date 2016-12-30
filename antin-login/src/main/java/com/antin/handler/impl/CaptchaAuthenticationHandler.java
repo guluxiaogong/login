@@ -1,14 +1,15 @@
-package com.antin.service;
+package com.antin.handler.impl;
 
 import java.io.FileInputStream;
 import java.util.Set;
 
+import com.antin.handler.IAuthenticationHandler;
 import com.antin.helper.MD5;
 import com.antin.helper.StringUtil;
 import com.antin.model.Credential;
 import com.antin.model.DemoLoginUser;
 import com.antin.model.LoginUser;
-import com.antin.persistence.UserPersistenceObject;
+import com.antin.persist.UserPersistenceObject;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
@@ -42,7 +43,7 @@ public class CaptchaAuthenticationHandler implements IAuthenticationHandler {
         else {
             try {
                 String password = credential.getParameter("password");
-                String password2 = MD5.encode(MD5.encode(loginUser.getPassword()) + verificationCode);
+                String password2 = MD5.encode(loginUser.getPassword() + verificationCode);
                 if (password2.equals(password)) {
                     return loginUser;
                 }
@@ -55,12 +56,19 @@ public class CaptchaAuthenticationHandler implements IAuthenticationHandler {
     }
 
 
-    // 自动登录
+    /**
+     * 自动登录
+     *
+     * @param auto
+     * @return
+     * @throws Exception
+     */
     @Override
-    public LoginUser validateAutoToken(String lt) throws Exception {
+    public LoginUser validateAutoToken(String auto) throws Exception {
 
-        // 从持久化存储中按lt查找对应loginUser
-        FileInputStream fis = new FileInputStream("d:/test");
+
+        // 从持久化存储中按auto查找对应loginUser
+        FileInputStream fis = new FileInputStream("/testssss");
         byte[] buff = new byte[fis.available()];
         fis.read(buff);
         fis.close();
@@ -69,7 +77,7 @@ public class CaptchaAuthenticationHandler implements IAuthenticationHandler {
         String[] tmps = tmp.split("=");
 
         // 相当于从存储中找个了与lt匹配的数据记录
-        if (lt.equals(tmps[0])) {
+        if (auto.equals(tmps[0])) {
             // 将匹配的数据装配成loginUser对象
             DemoLoginUser loginUser = userPersistenceObject.getUser(tmps[1]);
             return loginUser;
@@ -79,13 +87,19 @@ public class CaptchaAuthenticationHandler implements IAuthenticationHandler {
         return null;
     }
 
-    // 生成自动登录标识
+    /**
+     * 生成自动登录标识
+     *
+     * @param loginUser
+     * @return
+     * @throws Exception
+     */
     @Override
     public String createAutoToken(LoginUser loginUser) throws Exception {
 
         DemoLoginUser demoLoginUser = (DemoLoginUser) loginUser;
 
-        // 生成一个唯一标识用作lt
+        // 生成一个唯一标识用作auto
         String auto = StringUtil.uniqueKey();
 
         // 将新lt更新到当前user对应字段
@@ -94,7 +108,12 @@ public class CaptchaAuthenticationHandler implements IAuthenticationHandler {
         return auto;
     }
 
-    // 更新持久化的用户
+    /**
+     * 更新持久化的用户
+     *
+     * @param loginUser
+     * @throws Exception
+     */
     @Override
     public void clearAutoToken(LoginUser loginUser)
             throws Exception {
@@ -102,7 +121,13 @@ public class CaptchaAuthenticationHandler implements IAuthenticationHandler {
         userPersistenceObject.updateLoginToken(demoLoginUser.getLoginName(), null);
     }
 
-
+    /**
+     * 用户权限
+     *
+     * @param loginUser//TODO
+     * @return
+     * @throws Exception
+     */
     @Override
     public Set<String> authedRoles(LoginUser loginUser) throws Exception {
         return null;
