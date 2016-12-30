@@ -11,10 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import com.antin.helper.Config;
-import com.antin.helper.CookieUtil;
-import com.antin.helper.StringUtil;
-import com.antin.helper.TokenManager;
+import com.antin.helper.*;
 import com.antin.model.Credential;
 import com.antin.model.LoginUser;
 import com.antin.service.IPreLoginHandler;
@@ -30,6 +27,8 @@ public class LoginController {
     @Autowired
     private Config config;
 
+    @Autowired
+    private LoginHelper loginHelper;
     /**
      * 主页面
      *
@@ -43,25 +42,19 @@ public class LoginController {
     /**
      * 登录入口
      *
-     * @param request
      * @param backUrl
-     * @param response
      * @return
      * @throws Exception
      */
     @RequestMapping(value = "/login")
-    public String login(HttpServletRequest request, String backUrl, HttpServletResponse response) throws Exception {
-        //获取自动登录标识存在
-        String auto = CookieUtil.getCookie("auto", request);
+    public String login(String backUrl,HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-        if (auto != null) {
-            //验证自动标识是否有效
-            LoginUser loginUser = config.getAuthenticationHandler().validateAutoToken(auto);
-            if (loginUser != null) {
-                authSuccess(response, loginUser, true);//自动登录标识有效，生成令牌
-                return validateSuccess(backUrl, loginUser, response);
-            }
-        }
+        //验证令牌和验证自动登录标识
+//        if (loginHelper.validateTokenAndAuto(request, response)) {
+//            return "";
+//        }
+
+
         String loginVieName = config.getLoginViewName();
         if (backUrl != null) {
             loginVieName += "?" + URLEncoder.encode(backUrl, "utf-8");
@@ -151,7 +144,6 @@ public class LoginController {
     public String logout(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         String token = CookieUtil.getCookie("token", request);
-        // String auto = CookieUtil.getCookie("auto", request);
 
         // 清除自动登录信息
         LoginUser loginUser = TokenManager.validate(token);
@@ -159,37 +151,33 @@ public class LoginController {
             // 清除服务端自动登录状态
             config.getAuthenticationHandler().clearAutoToken(loginUser);
             // 清除自动登录cookie
-            Cookie autoCookie = new Cookie("auto", null);
-            autoCookie.setMaxAge(0);
-            response.addCookie(autoCookie);
+            CookieUtil.deleteCookie("auto", response, null);
         }
 
         // 移除server端token
         TokenManager.invalid(token);
 
         // 移除客户端token cookie
-        Cookie tokenCookie = new Cookie("token", null);
-        tokenCookie.setMaxAge(0);
-        response.addCookie(tokenCookie);
+        CookieUtil.deleteCookie("token", response, null);
 
         return config.getLoginViewName();
     }
 
-    // 令牌验证成功或登录成功后的操作
-    private String validateSuccess(String backUrl, LoginUser loginUser, HttpServletResponse response)
-            throws Exception {
-
-        Cookie loginUserCookie = new Cookie("userName", loginUser.toString());
-        response.addCookie(loginUserCookie);
-
-        if (backUrl != null) {//如果有带访问页面验证成功后就跳转到该页面
-            response.sendRedirect(URLDecoder.decode(backUrl, "utf-8"));
-            return null;
-        } else //否则跳转的主页面
-            return config.getIndexViewName();
-
-
-    }
+//    // 令牌验证成功或登录成功后的操作
+//    private String validateSuccess(String backUrl, LoginUser loginUser, HttpServletResponse response)
+//            throws Exception {
+//
+//        Cookie loginUserCookie = new Cookie("userName", loginUser.toString());
+//        response.addCookie(loginUserCookie);
+//
+//        if (backUrl != null) {//如果有带访问页面验证成功后就跳转到该页面
+//            response.sendRedirect(URLDecoder.decode(backUrl, "utf-8"));
+//            return null;
+//        } else //否则跳转的主页面
+//            return config.getIndexViewName();
+//
+//
+//    }
 
     // 授权成功后的操作
     private String authSuccess(HttpServletResponse response, LoginUser loginUser, Boolean rememberMe) throws Exception {
@@ -198,9 +186,8 @@ public class LoginController {
         // 生成自动登录标识
         if (rememberMe != null && rememberMe) {
             String auto = config.getAuthenticationHandler().createAutoToken(loginUser);
-            setLtCookie(auto, response);
+            CookieUtil.setCookie("auto", auto, config.getAutoLoginExpDays() * 24 * 60 * 60, config.isSecureMode(), response, null);
         }
-
         // 存入Map
         TokenManager.addToken(token, loginUser);
         // 写 Cookie
@@ -210,20 +197,8 @@ public class LoginController {
         if (config.isSecureMode()) {
             cookie.setSecure(true);
         }
-
         response.addCookie(cookie);
         return token;
     }
-
-    // 写lt cookie
-    private void setLtCookie(String auto, HttpServletResponse response) {
-        Cookie autoCookie = new Cookie("auto", auto);
-        autoCookie.setMaxAge(config.getAutoLoginExpDays() * 24 * 60 * 60);
-        if (config.isSecureMode())
-            autoCookie.setSecure(true);
-
-        response.addCookie(autoCookie);
-    }
-
 
 }

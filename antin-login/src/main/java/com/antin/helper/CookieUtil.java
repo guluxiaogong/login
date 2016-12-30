@@ -15,6 +15,27 @@ public class CookieUtil {
     }
 
     /**
+     * 写cookie
+     *
+     * @param cookieName
+     * @param cookieValue
+     * @param maxAge
+     * @param response
+     * @param path
+     */
+    public static void setCookie(String cookieName, String cookieValue, int maxAge, boolean isSecureMode, HttpServletResponse response, String path) {
+
+        Cookie cookie = new Cookie(cookieName, cookieValue);
+        cookie.setMaxAge(maxAge);
+        if (path != null)
+            cookie.setPath("/");
+
+        if (isSecureMode)
+            cookie.setSecure(true);
+        response.addCookie(cookie);
+    }
+
+    /**
      * 查找特定cookie值
      *
      * @param cookieName

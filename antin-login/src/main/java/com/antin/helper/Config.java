@@ -25,8 +25,11 @@ public class Config implements ResourceLoaderAware {
     private ResourceLoader resourceLoader;
 
     private IAuthenticationHandler authenticationHandler; // 鉴权处理器
+
     private IPreLoginHandler preLoginHandler; // 登录前预处理器
+
     private String loginViewName = "/login.html"; // 登录页面视图名称
+
     private String indexViewName = "/index.html";//首页
 
     private int tokenTimeout = 30; // 令牌有效期，单位为分钟，默认30分钟
@@ -35,7 +38,6 @@ public class Config implements ResourceLoaderAware {
 
     private int autoLoginExpDays = 365; // 自动登录状态有效期限，默认一年
 
-    private List<String> excludes = new ArrayList<>();
 
     /**
      * 重新加载配置，以支持热部署
@@ -82,9 +84,6 @@ public class Config implements ResourceLoaderAware {
                 logger.warn("autoLoginExpDays参数配置不正确");
             }
         }
-//        excludes.add("/");
-//        excludes.add("/login");
-//        excludes.add("/preLogin");
     }
 
     /**
@@ -158,14 +157,6 @@ public class Config implements ResourceLoaderAware {
 
     public void setTokenTimeout(int tokenTimeout) {
         this.tokenTimeout = tokenTimeout;
-    }
-
-    public List<String> getExcludes() {
-        return excludes;
-    }
-
-    public void setExcludes(List<String> excludes) {
-        this.excludes = excludes;
     }
 
     @Override
