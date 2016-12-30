@@ -3,7 +3,6 @@ package com.antin.controller;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,9 +49,8 @@ public class LoginController {
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "/")
+    @RequestMapping(value = "/login")
     public String login(HttpServletRequest request, String backUrl, HttpServletResponse response) throws Exception {
-        System.out.println(request.getHeader("Referer") + "-------GET----" + request.getRequestURL());
         //获取自动登录标识存在
         String auto = CookieUtil.getCookie("auto", request);
 
@@ -86,7 +84,6 @@ public class LoginController {
     @RequestMapping(method = RequestMethod.POST, value = "/login")
     public Object login(String backUrl, Boolean rememberMe, HttpServletRequest request, HttpSession session,
                         HttpServletResponse response) throws Exception {
-        System.out.println(request.getHeader("Referer") + "-----POST------" + request.getRequestURL());
         final Map<String, String[]> params = request.getParameterMap();
 
         //验证码

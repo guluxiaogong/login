@@ -16,7 +16,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 
 /**
  * Created by Administrator on 2016/12/29.
@@ -25,14 +27,12 @@ public class LoginInterceptor implements HandlerInterceptor {
 
     private Logger logger = LoggerFactory.getLogger(LoginInterceptor.class);
 
-    private String excludes;
 
     @Autowired
     private Config config;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object o) throws Exception {
-        System.out.println("-------preHandle----" + request.getRequestURI());
         // 如果是不需要拦截的请求，直接通过
         if (requestIsExclude(request))
             return true;
@@ -67,11 +67,10 @@ public class LoginInterceptor implements HandlerInterceptor {
      * 回调url构造
      */
     private String getLocation(HttpServletRequest request) throws UnsupportedEncodingException {
-        // String qstr = makeQueryString(request); // 将所有请求参数重新拼接成queryString
-        //String backUrl = request.getRequestURL() + qstr; // 回调url
-
-        // String location = request.getContextPath() + "/?backUrl=" + URLEncoder.encode(backUrl, "utf-8");
-        return request.getContextPath() + "/";
+        String qstr = makeQueryString(request); // 将所有请求参数重新拼接成queryString
+        String backUrl = request.getRequestURL() + qstr; // 回调url
+        String location = request.getContextPath() + "/?backUrl=" + URLEncoder.encode(backUrl, "utf-8");
+        return location;
     }
 
     /**
@@ -108,17 +107,13 @@ public class LoginInterceptor implements HandlerInterceptor {
      */
     private boolean requestIsExclude(ServletRequest request) {
 
-        // 没有设定excludes时，所以经过filter的请求都需要被处理
-        if (StringUtil.isEmpty(excludes))
-            return false;
-
         // 获取去除context path后的请求路径
         String contextPath = request.getServletContext().getContextPath();
         String uri = ((HttpServletRequest) request).getRequestURI();
         uri = uri.substring(contextPath.length());
 
         // 正则模式匹配的uri被排除，不需要拦截
-        boolean isExcluded = uri.matches(excludes);
+        boolean isExcluded = config.getExcludes().contains(uri);
 
         if (isExcluded)
             logger.debug("request path: {} is excluded!", uri);

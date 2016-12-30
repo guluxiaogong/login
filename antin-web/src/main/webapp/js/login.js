@@ -21,13 +21,13 @@ $(function () {
 
         },
         submitForm: function () {
-            // alert('aa');
             var UNAME_COOKIE_NAME = 'lastLoginUserName';
             // 如果name没有value，将cookie中存储过的name值写入
             var loginName = $('input[name=loginName]');
             loginName.val(Cookie.get(UNAME_COOKIE_NAME));
 
-            $('button[type=submit]').on('click', function () {
+            $('button[type=submit]').on('click', function (e) {
+                e.preventDefault();
                 // 登录按钮被点击时记住当前name
                 Cookie.set(UNAME_COOKIE_NAME, $.trim(loginName.val()), null, 7 * 24 * 60);
                 // 将密码字段使用 MD5(MD5(密码) + 验证码）编码后发给服务端
@@ -43,11 +43,8 @@ $(function () {
                     beforeSend: function (xhr) {
                         console.log(xhr);
                         $('.message').html("登录中...");
-                    }
-
-                    ,
+                    },
                     success: function (result) { //...
-                        //alert(result);
                         var content = "网络连接失败！";
                         if (result) {
                             if (result.code == 0)
@@ -63,8 +60,7 @@ $(function () {
                         }
                         $('.message').html(content);
                         console.log(result);
-                    }
-                    ,
+                    },
                     error: function (XMLHttpRequest, errorMsg, e) {
                         console.log(errorMsg);
                         $('.message').html("登录失败！");
@@ -72,7 +68,7 @@ $(function () {
                     ,
                     complete: function (xhr, ts) {
                         console.log(xhr);
-                        //internal.loadCaptcha();
+                        internal.loadCaptcha();
                     }
                 });
             });

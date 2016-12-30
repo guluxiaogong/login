@@ -1,6 +1,8 @@
 package com.antin.helper;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import com.antin.service.IAuthenticationHandler;
@@ -32,6 +34,8 @@ public class Config implements ResourceLoaderAware {
     private boolean secureMode = false; // 是否必须为https
 
     private int autoLoginExpDays = 365; // 自动登录状态有效期限，默认一年
+
+    private List<String> excludes = new ArrayList<>();
 
     /**
      * 重新加载配置，以支持热部署
@@ -78,6 +82,9 @@ public class Config implements ResourceLoaderAware {
                 logger.warn("autoLoginExpDays参数配置不正确");
             }
         }
+//        excludes.add("/");
+//        excludes.add("/login");
+//        excludes.add("/preLogin");
     }
 
     /**
@@ -151,6 +158,14 @@ public class Config implements ResourceLoaderAware {
 
     public void setTokenTimeout(int tokenTimeout) {
         this.tokenTimeout = tokenTimeout;
+    }
+
+    public List<String> getExcludes() {
+        return excludes;
+    }
+
+    public void setExcludes(List<String> excludes) {
+        this.excludes = excludes;
     }
 
     @Override
