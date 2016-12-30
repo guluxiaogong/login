@@ -1,18 +1,10 @@
 package com.antin.helper;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
-import java.util.Set;
 
-import com.antin.model.ClientSystem;
-import com.antin.model.LoginUser;
 import com.antin.service.IAuthenticationHandler;
 import com.antin.service.IPreLoginHandler;
-import org.dom4j.Document;
-import org.dom4j.Element;
-import org.dom4j.io.SAXReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ResourceLoaderAware;
@@ -41,12 +33,8 @@ public class Config implements ResourceLoaderAware {
 
     private int autoLoginExpDays = 365; // 自动登录状态有效期限，默认一年
 
-    private List<ClientSystem> clientSystems = new ArrayList<ClientSystem>();
-
     /**
      * 重新加载配置，以支持热部署
-     *
-     * @throws Exception
      */
     public void refreshConfig() throws Exception {
 
@@ -80,8 +68,7 @@ public class Config implements ResourceLoaderAware {
         }
 
         // 自动登录有效期
-        String configAutoLoginExpDays = configProperties
-                .getProperty("autoLoginExpDays");
+        String configAutoLoginExpDays = configProperties.getProperty("autoLoginExpDays");
         if (configAutoLoginExpDays != null) {
             try {
                 autoLoginExpDays = Integer.parseInt(configAutoLoginExpDays);
@@ -91,49 +78,13 @@ public class Config implements ResourceLoaderAware {
                 logger.warn("autoLoginExpDays参数配置不正确");
             }
         }
-
-        // 加载客户端系统配置列表
-        try {
-            loadClientSystems();
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new Exception("加载client system配置失败");
-        }
-    }
-
-    // 加载客户端系统配置列表
-    @SuppressWarnings("unchecked")
-    private void loadClientSystems() throws Exception {
-        Resource resource = resourceLoader
-                .getResource("classpath:client_systems.xml");
-        // dom4j
-        SAXReader reader = new SAXReader();
-        Document doc = reader.read(resource.getInputStream());
-
-        Element rootElement = doc.getRootElement();
-        List<Element> systemElements = rootElement.elements();
-
-        clientSystems.clear();
-        for (Element element : systemElements) {
-            ClientSystem clientSystem = new ClientSystem();
-
-            clientSystem.setId(element.attributeValue("id"));
-            clientSystem.setName(element.attributeValue("name"));
-            clientSystem.setBaseUrl(element.elementText("baseUrl"));
-            clientSystem.setHomeUri(element.elementText("homeUri"));
-            clientSystem.setInnerAddress(element.elementText("innerAddress"));
-
-            clientSystems.add(clientSystem);
-        }
     }
 
     /**
      * 应用停止时执行，做清理性工作，如通知客户端logout
      */
     public void destroy() {
-        for (ClientSystem clientSystem : clientSystems) {
-            clientSystem.noticeShutdown();
-        }
+
     }
 
     /**
@@ -200,45 +151,6 @@ public class Config implements ResourceLoaderAware {
 
     public void setTokenTimeout(int tokenTimeout) {
         this.tokenTimeout = tokenTimeout;
-    }
-
-    /**
-     * 客户端系统列表
-     *
-     * @return
-     */
-    public List<ClientSystem> getClientSystems() {
-        return clientSystems;
-    }
-
-    public void setClientSystems(List<ClientSystem> clientSystems) {
-        this.clientSystems = clientSystems;
-    }
-
-    /**
-     * 获取指定用户的可用系统列表
-     *
-     * @param loginUser
-     * @return
-     * @throws Exception
-     */
-    public List<ClientSystem> getClientSystems(LoginUser loginUser)
-            throws Exception {
-        Set<String> authedSysIds = getAuthenticationHandler().authedRoles(loginUser);
-
-        // null表示允许全部
-        if (authedSysIds == null) {
-            return clientSystems;
-        }
-
-        List<ClientSystem> auhtedSystems = new ArrayList<ClientSystem>();
-        for (ClientSystem clientSystem : clientSystems) {
-            if (authedSysIds.contains(clientSystem.getId())) {
-                auhtedSystems.add(clientSystem);
-            }
-        }
-
-        return auhtedSystems;
     }
 
     @Override

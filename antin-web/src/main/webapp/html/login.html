@@ -23,8 +23,8 @@
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
-    <script src='https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js'></script>
-    <script src='https://oss.maxcdn.com/respond/1.4.2/respond.min.js'></script>
+   <!-- <script src='https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js'></script>
+    <script src='https://oss.maxcdn.com/respond/1.4.2/respond.min.js'></script>-->
     <![endif]-->
     <script src='script/jquery-1.11.1.js'></script>
     <script src='script/cookieUtil.js'></script>
@@ -46,7 +46,7 @@
 
     .captcha .input-div {
         float: left;
-        width:57%;
+        width: 57%;
     }
 
     .captcha .img-div {
@@ -57,6 +57,17 @@
         width: auto;
         height: 44px;
         cursor: pointer;
+    }
+
+    .checkbox {
+        float: left;
+    }
+
+    .message {
+        float: left;
+        margin-left: 10px;
+        margin-top: 10px;
+        color: red;
     }
 </style>
 
@@ -78,6 +89,8 @@
                 <input type='checkbox' value='rememberMe'> 五天内自动登录
             </label>
         </div>
+        <div class="message"></div>
+
         <button class='btn btn-lg btn-primary btn-block' type='submit'>登录</button>
     </form>
 

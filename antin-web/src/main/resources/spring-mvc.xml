@@ -34,14 +34,14 @@
     <mvc:default-servlet-handler/>
 
     <!-- 定义无需Controller的url<->view直接映射 -->
-    <mvc:view-controller path="/" view-name="redirect:/login"/>
+   <!-- <mvc:view-controller path="/" view-name="redirect:/login"/>-->
 
     <mvc:interceptors>
         <!-- secure mode拦截检验 -->
-        <mvc:interceptor>
+        <!--<mvc:interceptor>
             <mvc:mapping path="/*"/>
-            <bean class="com.antin.helper.SecureModeInterceptor"/>
-        </mvc:interceptor>
+            <bean class="com.antin.interceptor.SecureModeInterceptor"/>
+        </mvc:interceptor>-->
         <!--登录拦截检验-->
         <mvc:interceptor>
             <mvc:mapping path="/*"/>

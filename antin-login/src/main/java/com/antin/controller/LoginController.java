@@ -1,6 +1,9 @@
 package com.antin.controller;
 
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,6 +32,16 @@ public class LoginController {
     private Config config;
 
     /**
+     * 主页面
+     *
+     * @return
+     */
+    @RequestMapping("/index")
+    public String index() {
+        return config.getIndexViewName();
+    }
+
+    /**
      * 登录入口
      *
      * @param request
@@ -37,7 +50,7 @@ public class LoginController {
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    @RequestMapping(value = "/")
     public String login(HttpServletRequest request, String backUrl, HttpServletResponse response) throws Exception {
         System.out.println(request.getHeader("Referer") + "-------GET----" + request.getRequestURL());
         //获取自动登录标识存在
@@ -51,7 +64,11 @@ public class LoginController {
                 return validateSuccess(backUrl, loginUser, response);
             }
         }
-        return config.getLoginViewName() + "?" + backUrl;
+        String loginVieName = config.getLoginViewName();
+        if (backUrl != null) {
+            loginVieName += "?" + URLEncoder.encode(backUrl, "utf-8");
+        }
+        return loginVieName;
     }
 
     /**
@@ -104,7 +121,7 @@ public class LoginController {
         } else {//验证成功
             authSuccess(response, loginUser, rememberMe);
 
-            Cookie loginUserCookie = new Cookie("userName", loginUser.toString());
+            Cookie loginUserCookie = new Cookie("loginName", loginUser.toString());
             response.addCookie(loginUserCookie);
 
             map.put("code", "1");
@@ -169,7 +186,7 @@ public class LoginController {
         response.addCookie(loginUserCookie);
 
         if (backUrl != null) {//如果有带访问页面验证成功后就跳转到该页面
-            response.sendRedirect(backUrl);
+            response.sendRedirect(URLDecoder.decode(backUrl, "utf-8"));
             return null;
         } else //否则跳转的主页面
             return config.getIndexViewName();
@@ -210,4 +227,6 @@ public class LoginController {
 
         response.addCookie(autoCookie);
     }
+
+
 }

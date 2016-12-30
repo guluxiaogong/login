@@ -32,7 +32,7 @@ public class LoginInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object o) throws Exception {
-       System.out.println("-------preHandle----"+request.getRequestURI());
+        System.out.println("-------preHandle----" + request.getRequestURI());
         // 如果是不需要拦截的请求，直接通过
         if (requestIsExclude(request))
             return true;
@@ -41,8 +41,10 @@ public class LoginInterceptor implements HandlerInterceptor {
         String token = CookieUtil.getCookie("token", request);
         if (token != null) {  // 令牌存在
             LoginUser loginUser = TokenManager.validate(token);
-            if (loginUser != null)  //令牌有效
+            if (loginUser != null) {  //令牌有效
+                TokenManager.updateExpired(token);//更新最近访问时间
                 return true;
+            }
         }
 
         //令牌不存在或无效跳转到登录页面
@@ -65,10 +67,11 @@ public class LoginInterceptor implements HandlerInterceptor {
      * 回调url构造
      */
     private String getLocation(HttpServletRequest request) throws UnsupportedEncodingException {
-        String qstr = makeQueryString(request); // 将所有请求参数重新拼接成queryString
-        String backUrl = request.getRequestURL() + qstr; // 回调url
-        String location = "/login?backUrl=" + URLEncoder.encode(backUrl, "utf-8");
-        return location;
+        // String qstr = makeQueryString(request); // 将所有请求参数重新拼接成queryString
+        //String backUrl = request.getRequestURL() + qstr; // 回调url
+
+        // String location = request.getContextPath() + "/?backUrl=" + URLEncoder.encode(backUrl, "utf-8");
+        return request.getContextPath() + "/";
     }
 
     /**
