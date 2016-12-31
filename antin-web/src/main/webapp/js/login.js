@@ -39,7 +39,8 @@ $(function () {
                         loginName: $.trim(loginName.val()),
                         password: $.md5($.md5($('input[type=password]').val()) + captcha),
                         captcha: captcha,
-                        rememberMe:$('input[type=checkbox]')[0].checked
+                        rememberMe: $('input[type=checkbox]')[0].checked,
+                        backUrl:internal.getUrlParam("backUrl")
                     },
                     beforeSend: function (xhr) {
                         console.log(xhr);
@@ -53,7 +54,7 @@ $(function () {
                                 content = result.errorMsg;
                             else if (result.code == 1) {
                                 if (result.backUrl)
-                                    content = backUrl;
+                                    content = result.backUrl;
                                 else
                                     content = "index";
                                 window.location.href = content;
@@ -85,6 +86,13 @@ $(function () {
             }).fail(function () {
                 alert('验证码加载失败');
             });
+        },
+        //获取url中的参数
+        getUrlParam: function (name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+            var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+            if (r != null) return unescape(r[2]);
+            return null; //返回参数值
         }
 
     };

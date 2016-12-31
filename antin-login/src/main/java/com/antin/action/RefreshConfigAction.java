@@ -1,5 +1,6 @@
-package com.antin.helper;
+package com.antin.action;
 
+import com.antin.helper.ConfigHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

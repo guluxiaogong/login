@@ -24,31 +24,37 @@ public class TokenManager {
 
     private static final ConfigHelper CONFIG_HELPER = SpringContextUtil.getBean(ConfigHelper.class);
 
-    static {//定期清理过期的令牌
+    /**
+     * /定期清理过期的令牌
+     */
+    static {
+        long timeout = CONFIG_HELPER.getTokenTimeout() * 60 * 1000;
         timer.schedule(new TimerTask() {
 
             @Override
             public void run() {
 
                 for (Entry<String, TokenModel> entry : DATA_MAP.entrySet()) {
-                    String vt = entry.getKey();
-                    TokenModel tm = entry.getValue();
-                    Date expired = tm.expired;
+                    String token = entry.getKey();
+                    TokenModel tokenModel = entry.getValue();
+                    Date expired = tokenModel.expired;
                     Date now = new Date();
 
                     // 当前时间大于过期时间
-                    if (now.compareTo(expired) > 0) {
+                    if (now.compareTo(new Date(expired.getTime() + timeout)) > 0) {
                         // 因为令牌支持自动延期服务
-                        logger.debug("清除过期token：" + vt);
+                        logger.debug("清除过期token：" + token);
                         // 已过期，清除对应token
-                        DATA_MAP.remove(vt);
+                        DATA_MAP.remove(token);
                     }
                 }
             }
         }, 60 * 1000, 60 * 1000);
     }
 
-    // 避免静态类被实例化
+    /**
+     * 避免静态类被实例化
+     */
     private TokenManager() {
     }
 
@@ -68,8 +74,12 @@ public class TokenManager {
      * @return
      */
     public static LoginUser validate(String token) {
-        TokenModel tm = DATA_MAP.get(token);
-        return tm == null ? null : tm.loginUser;
+        TokenModel tokenModel = DATA_MAP.get(token);
+        if (tokenModel != null) {
+            tokenModel.expired = new Date();// 更新最后访问时间
+            return tokenModel.loginUser;
+        }
+        return null;
     }
 
     /**
@@ -79,13 +89,11 @@ public class TokenManager {
      * @param loginUser
      */
     public static void addToken(String token, LoginUser loginUser) {
-        TokenModel tm = new TokenModel();
-        tm.loginUser = loginUser;
+        TokenModel tokenModel = new TokenModel();
+        tokenModel.loginUser = loginUser;
+        tokenModel.expired = new Date();
 
-        tm.expired = new Date(new Date().getTime()
-                + CONFIG_HELPER.getTokenTimeout() * 60 * 1000);
-
-        DATA_MAP.put(token, tm);
+        DATA_MAP.put(token, tokenModel);
     }
 
     /**
@@ -99,12 +107,4 @@ public class TokenManager {
         }
     }
 
-    public static void updateExpired(String token) {
-
-        // 从缓存中查找数据
-        TokenModel tk = DATA_MAP.get(token);
-
-        if (tk != null)  // 用户数据存在
-            tk.expired = new Date(); // 更新最后访问时间
-    }
 }

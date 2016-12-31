@@ -3,8 +3,8 @@ package com.antin.helper;
 import java.io.IOException;
 import java.util.Properties;
 
-import com.antin.handler.IAuthenticationHandler;
-import com.antin.handler.IPreLoginHandler;
+import com.antin.auth.IAuthenticationHandler;
+import com.antin.auth.IPreLoginHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ResourceLoaderAware;

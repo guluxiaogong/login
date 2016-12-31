@@ -15,11 +15,7 @@ $(function () {
         },
         doLayout: function () {
 
-        },
-        logout:function(){
-
         }
-
 
     };
 

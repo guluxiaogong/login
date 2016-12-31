@@ -2,7 +2,7 @@ package com.antin.helper;
 
 import com.antin.model.Credential;
 import com.antin.model.LoginUser;
-import com.antin.handler.IPreLoginHandler;
+import com.antin.auth.IPreLoginHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -51,10 +51,11 @@ public class LoginHelper {
         String token = CookieUtil.getCookie("token", request);
         if (token != null) {  // 令牌存在
             LoginUser loginUser = TokenManager.validate(token);
-            if (loginUser != null) {  //令牌有效
-                TokenManager.updateExpired(token);//更新最近访问时间
+            if (loginUser != null)   //令牌有效
                 return true;
-            }
+            else
+                CookieUtil.deleteCookie("token", response, null);//令牌无效就删除
+
         }
         return false;
     }
@@ -83,7 +84,7 @@ public class LoginHelper {
     }
 
     /**
-     * 获取鉴权对象
+     * 生成鉴权对象
      *
      * @param request
      * @param session

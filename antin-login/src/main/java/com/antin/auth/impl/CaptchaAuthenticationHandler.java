@@ -1,9 +1,9 @@
-package com.antin.handler.impl;
+package com.antin.auth.impl;
 
 import java.io.FileInputStream;
 import java.util.Set;
 
-import com.antin.handler.IAuthenticationHandler;
+import com.antin.auth.IAuthenticationHandler;
 import com.antin.helper.MD5;
 import com.antin.helper.StringUtil;
 import com.antin.model.Credential;

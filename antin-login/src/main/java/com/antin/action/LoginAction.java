@@ -1,6 +1,7 @@
 package com.antin.action;
 
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,7 +13,8 @@ import javax.servlet.http.HttpSession;
 import com.antin.helper.*;
 import com.antin.model.Credential;
 import com.antin.model.LoginUser;
-import com.antin.handler.IPreLoginHandler;
+import com.antin.auth.IPreLoginHandler;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,10 +25,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class LoginAction {
 
     @Autowired
-    private ConfigHelper configHelper;
+    private LoginHelper loginHelper;
 
     @Autowired
-    private LoginHelper loginHelper;
+    private ConfigHelper configHelper;
 
     /**
      * 主页面
@@ -39,6 +41,30 @@ public class LoginAction {
     }
 
     /**
+     * 测试用
+     *
+     * @return
+     */
+    @RequestMapping("/test")
+    public String test() {
+        return "/html/test.html";
+    }
+
+    /**
+     * 测试用
+     *
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/test1")
+    public Map<String, String> test1() {
+        Map<String, String> map = new HashMap<>();
+        map.put("name", "zhangsan");
+        map.put("age", "15");
+        return map;
+    }
+
+    /**
      * 登录入口
      *
      * @param backUrl
@@ -48,7 +74,7 @@ public class LoginAction {
      * @throws Exception
      */
     @RequestMapping(value = "/login")
-    public String login(String backUrl, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public Object login(String backUrl, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         //验证令牌和验证自动登录标识
         if (loginHelper.validateTokenAndAuto(request, response)) {
@@ -56,10 +82,10 @@ public class LoginAction {
             return null;
         }
 
-        //直接请求/login或拦截请求重定向到这
+        //直接请求/login或拦截重定向请求到这直接返回登录页
         String loginVieName = configHelper.getLoginViewName();
-        if (backUrl != null && !backUrl.equals("/login"))//带有backUrl时返回回调url，以便验证成功后直接跳转到该url
-            loginVieName += "?" + URLEncoder.encode(backUrl, "utf-8");
+        if (backUrl != null && !backUrl.startsWith("/login"))//带有backUrl时返回回调url，以便验证成功后直接跳转到该url
+            loginVieName += "?" + backUrl;
 
         return loginVieName;
     }
@@ -79,10 +105,10 @@ public class LoginAction {
     @RequestMapping(method = RequestMethod.POST, value = "/login")
     public Object login(String backUrl, Boolean rememberMe, HttpServletRequest request, HttpSession session,
                         HttpServletResponse response) throws Exception {
-        //获取鉴权对象
+        //生成鉴权对象
         Credential credential = loginHelper.getCredential(request, session);
 
-        //对象验证
+        //鉴权对象验证
         LoginUser loginUser = configHelper.getAuthenticationHandler().authenticate(credential);
 
         Map<String, String> map = new HashMap<>();
@@ -140,7 +166,7 @@ public class LoginAction {
             // 清除服务端自动登录状态
             configHelper.getAuthenticationHandler().clearAutoToken(loginUser);
             // 清除自动登录cookie
-           // CookieUtil.deleteCookie("auto", response, null);
+            CookieUtil.deleteCookie("auto", response, null);
         }
 
         // 移除server端token

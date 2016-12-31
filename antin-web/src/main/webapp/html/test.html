@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel='icon' href='script/bootStrap/images/favicon.ico'>
+    <title>Title</title>
+</head>
+<script src='script/jquery-1.11.1.js'></script>
+<style type="text/css">
+
+</style>
+<script>
+    $(document).ready(function () {
+
+        $("#testAjax").on('click', function () {
+            $.ajax({
+                type: 'post',
+                url: 'test1',
+                beforeSend: function (xhr) {
+
+                },
+                success: function (result) {
+                    if(result instanceof Object)
+                        alert(result.name+':'+result.age);
+                    else
+                        window.location.href = 'login';
+//                    var json = JSON.parse(result);
+//                    if (json.code == 0 && !json.errorMsg)
+//
+//                    console.log(result);
+
+                },
+                error: function (XMLHttpRequest, errorMsg, e) {
+
+                }
+                ,
+                complete: function (xhr, ts) {
+
+                }
+            });
+
+        });
+
+    });
+
+
+</script>
+<body>
+<div style="width:80%;height:100%;margin: 0 auto;background-color: #9acfea;text-align: center;">
+    <h2>test page</h2>
+    <input type="button" value="测试ajax请求" id="testAjax"/>
+</div>
+
+
+</body>
+</html>

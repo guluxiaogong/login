@@ -19,10 +19,10 @@
         <property name="loginViewName" value="/html/login.html"/>
         <property name="indexViewName" value="/html/index.html"/>
         <property name="authenticationHandler">
-            <bean class="com.antin.handler.impl.CaptchaAuthenticationHandler"/>
+            <bean class="com.antin.auth.impl.CaptchaAuthenticationHandler"/>
         </property>
         <property name="preLoginHandler">
-            <bean class="com.antin.handler.impl.CaptchaPreLoginHandler"/>
+            <bean class="com.antin.auth.impl.CaptchaPreLoginHandler"/>
         </property>
     </bean>
 </beans>

@@ -1,6 +1,6 @@
-package com.antin.handler.impl;
+package com.antin.auth.impl;
 
-import com.antin.handler.IAuthenticationHandler;
+import com.antin.auth.IAuthenticationHandler;
 import com.antin.model.Credential;
 import com.antin.model.DemoLoginUser;
 import com.antin.model.LoginUser;

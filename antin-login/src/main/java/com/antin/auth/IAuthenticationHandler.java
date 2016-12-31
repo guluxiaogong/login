@@ -1,4 +1,4 @@
-package com.antin.handler;
+package com.antin.auth;
 
 import com.antin.model.Credential;
 import com.antin.model.LoginUser;
